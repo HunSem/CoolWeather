@@ -1,20 +1,15 @@
 package com.example.coolweather.db;
 
-import android.content.ContentValues;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 
-import com.example.coolweather.R;
 import com.example.coolweather.model.City;
 import com.example.coolweather.model.County;
 import com.example.coolweather.model.Province;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +38,7 @@ public class CoolWeatherDB {
         CoolWeatherOpenHelper city_dbHelper = new CoolWeatherOpenHelper(context,
                 CITY_DB, null, VERSION);
         city_db = city_dbHelper.getWritableDatabase();
+
         CoolWeatherOpenHelper code_dbHelper = new CoolWeatherOpenHelper(context,
                 CODE_DB, null, VERSION);
         code_db = city_dbHelper.getWritableDatabase();

@@ -36,12 +36,12 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
         this.mContext = context;
 
         if(name.equals(CITY_DB)){
-            boolean tag = copyCityDatabase(CITY_DB);
-            Log.d("TAG", tag+":CITY");
+            copyCityDatabase(CITY_DB);
+            //Log.d("TAG", tag+":CITY");
         }else if (name.equals(CODE_DB))
         {
-            boolean tag = copyCodeDatabase(CODE_DB);
-            Log.d("TAG", tag+":CODE");
+            copyCodeDatabase(CODE_DB);
+            //Log.d("TAG", tag+":CODE");
         }
     }
 

@@ -4,6 +4,7 @@ package com.example.coolweather.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.coolweather.model.City;
 import com.example.coolweather.model.County;
@@ -41,7 +42,7 @@ public class CoolWeatherDB {
 
         CoolWeatherOpenHelper code_dbHelper = new CoolWeatherOpenHelper(context,
                 CODE_DB, null, VERSION);
-        code_db = city_dbHelper.getWritableDatabase();
+        code_db = code_dbHelper.getWritableDatabase();
 
     }
 
@@ -74,7 +75,7 @@ public class CoolWeatherDB {
                 list.add(province);
             }while (cursor.moveToNext());
         }
-        if(cursor != null){
+        if(!cursor.isClosed()){
             cursor.close();
         }
         return list;
@@ -101,7 +102,7 @@ public class CoolWeatherDB {
                 list.add(city);
             }while (cursor.moveToNext());
         }
-        if(cursor != null){
+        if(!cursor.isClosed()){
             cursor.close();
         }
         return list;
@@ -127,10 +128,40 @@ public class CoolWeatherDB {
                 list.add(county);
             }while (cursor.moveToNext());
         }
-        if(cursor != null){
+        if(!cursor.isClosed()){
             cursor.close();
         }
         return list;
+    }
+
+    public String loadCityCode(Province province, City city, County county){
+        StringBuilder cityCode = new StringBuilder();
+        //cityCode.append("CN");
+        int tempCode;
+        String tempProvince = province.getProvinceName();
+        String tempCity = city.getCityName();
+        String tempCounty = county.getCountyName();
+        tempProvince = tempProvince.substring(0,tempProvince.length()-1);
+        tempCity = tempCity.substring(0, tempCity.length()-1);
+        tempCounty = tempCounty.substring(0, tempCounty.length()-1);
+        Cursor cursor = code_db.query("Code", null, "county=? and city=? and province=?",
+                new String[] {tempCounty, tempCity, tempProvince}
+                , null, null, null);
+        Log.d("TAG", "reslut = "+cursor.getCount());
+
+        if(cursor.moveToFirst()){
+
+            tempCode = cursor.getInt(cursor.getColumnIndex("code"));
+            Log.d("TAG", "tempcode:"+tempCode);
+            cityCode.append(tempCode);
+        }else
+        {
+            Log.d("TAG", "no data");
+        }
+        if(!cursor.isClosed()){
+            cursor.close();
+        }
+        return cityCode.toString();
     }
 
 

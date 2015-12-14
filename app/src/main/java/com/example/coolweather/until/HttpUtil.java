@@ -1,5 +1,10 @@
 package com.example.coolweather.until;
 
+import android.util.Log;
+import android.widget.Toast;
+
+import com.example.coolweather.activity.WeatherActivity;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +19,7 @@ public class HttpUtil {
 
     public static void sendHttpRequest(final String address,
                                        final HttpCallbackListener listener){
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -24,13 +30,15 @@ public class HttpUtil {
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
                     connection.setReadTimeout(8000);
+                    connection.connect();
                     InputStream in = connection.getInputStream();
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
                     StringBuilder response = new StringBuilder();
                     String line;
                     while ((line = reader.readLine()) != null){
                         response.append(line);
                     }
+                    Log.d("CON", response.toString());
                     if(listener != null){
                         //回调onFinish()方法
                         listener.onFinish(response.toString());
@@ -46,6 +54,6 @@ public class HttpUtil {
                     }
                 }
             }
-        });
+        }).start();
     }
 }

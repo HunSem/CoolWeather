@@ -1,7 +1,10 @@
 package com.example.coolweather.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -27,11 +30,10 @@ import java.util.List;
  * Created by Percy on 2015/12/13.
  */
 public class ChooseAreaActivity extends AppCompatActivity {
-
-    private static final String key = "0a4eee7cdbc944dabe0de7ff85437a5a";
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY =1;
     public static final int LEVEL_COUNTY = 2;
+    public static final int LEVEL_NEXT = 3;
 
     private ProgressDialog progressDialog;
     private TextView titleText;
@@ -71,7 +73,14 @@ public class ChooseAreaActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getBoolean("city_selected", false)){
+            Intent intent = new Intent(this, WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         setContentView(R.layout.choose_area);
         listView = (ListView) findViewById(R.id.list_view);
         titleText = (TextView) findViewById(R.id.title_text);
@@ -89,6 +98,16 @@ public class ChooseAreaActivity extends AppCompatActivity {
                 }else if(currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCounties();
+                }
+                if(currentLevel == LEVEL_COUNTY){
+                    selectedCounty = countyList.get(position);
+                    String code = coolWeatherDB.loadCityCode(selectedProvince, selectedCity, selectedCounty);
+                   Toast.makeText(ChooseAreaActivity.this, code, Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                    intent.putExtra("county_code", code);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });

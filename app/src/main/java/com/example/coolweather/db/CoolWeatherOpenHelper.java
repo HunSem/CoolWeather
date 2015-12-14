@@ -1,54 +1,84 @@
+
 package com.example.coolweather.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+
+import com.example.coolweather.R;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 
 /**
  * Created by Percy on 2015/12/13.
  */
+
 public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
-    /**
-     * Province表创语句
-     */
-    public static final String CREATE_PROVINCE = "create table Province ("
-            +"id integer primary key autoincrement, "
-            +"province_name text, "
-            +"province_code text)";
+    public static final String CITY_DB = "china_city.db";
+    public static final String CODE_DB = "city_code.db";
 
-    /**
-     * City表创建语句
-     */
-    public static final String CREATE_CITY = "create table City ("
-            +"id integer primary key autoincrement, "
-            +"city_name text, "
-            +"city_code text)";
+    public static final String PACKAGE_NAME = "com.example.coolweather";
+    // 数据库路径
+    public static final String DB_PATH = "/data"
+            +  Environment.getDataDirectory().getAbsolutePath() + "/"
+            + PACKAGE_NAME + "/databases";
+    private Context mContext;
 
-    /**
-     * County表建表语句
-     */
-    public static final String CREATE_COUNTY = "create table County ("
-            +"id integer primary key autoincrement, "
-            +"county_name text, "
-            +"county_code text, "
-            +"city_id integer)";
 
     public CoolWeatherOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
+        this.mContext = context;
+        if(name.equals(CITY_DB)){
+            copyDatabase(CITY_DB);
+        }else if (name.equals(CODE_DB))
+        {
+            copyDatabase(CODE_DB);
+        }
     }
 
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //创建表
-        db.execSQL(CREATE_PROVINCE);
-        db.execSQL(CREATE_CITY);
-        db.execSQL(CREATE_COUNTY);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }
+
+    public boolean copyDatabase(String DB_NAME){
+        File dbfile = new File(DB_PATH, DB_NAME);
+        // 判断数据库文件是否存在，
+        // 若不存在,将/assets下的数据库文件导入到/data/data/package/databases下
+        // 若存在，就直接打开数据库
+        try {
+            if (!dbfile.exists()) {
+                // 获取读取/raw下的数据库文件的输入流
+                InputStream is = mContext.getResources().openRawResource(
+                        R.raw.china_city); //欲导入的数据库
+                // 创建往数据库中写数据的输出流
+                FileOutputStream fos = new FileOutputStream(dbfile);
+                byte[] buffer = new byte[1024];
+                int count = -1;
+                while((count = is.read(buffer)) != -1){
+                    fos.write(buffer, 0, count);
+                }
+                fos.close();
+                is.close();
+
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
 }
+

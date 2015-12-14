@@ -2,11 +2,9 @@ package com.example.coolweather.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -30,6 +28,7 @@ import java.util.List;
  */
 public class ChooseAreaActivity extends AppCompatActivity {
 
+    private static final String key = "0a4eee7cdbc944dabe0de7ff85437a5a";
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY =1;
     public static final int LEVEL_COUNTY = 2;
@@ -109,7 +108,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
             titleText.setText("中国");
             currentLevel = LEVEL_PROVINCE;
         }else {
-            queryFromServer(null, "province");
+            Toast.makeText(this, "初始化失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -128,7 +127,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
             titleText.setText(selectedProvince.getProvinceName());
             currentLevel = LEVEL_CITY;
         }else {
-            queryFromServer(selectedProvince.getProvinceCode(), "city");
+            Toast.makeText(this, "初始化失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -147,68 +146,10 @@ public class ChooseAreaActivity extends AppCompatActivity {
             titleText.setText(selectedCity.getCityName());
             currentLevel = LEVEL_COUNTY;
         }else {
-            queryFromServer(selectedCity.getCityCode(), "county");
+            Toast.makeText(this, "初始化失败", Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * 根据传入的代号和类型从服务器上查询省市县的数据
-     */
-    private void queryFromServer(final String code, final String type){
-        String address;
-        if(!TextUtils.isEmpty(code)){
-            address = "http://www.weather.com.cn/data/list3/city"+code+".xml";
-        }else {
-            address = "http://www.weather.com.cn/data/list3/city.xml";
-        }
-        showProgressDialog();
-        HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
-            @Override
-            public void onFinish(String response) {
-                boolean result = false;
-                if("province".equals(type)){
-                    result = Utility.handleProvincesResponse(coolWeatherDB,
-                            response);
-                }else if("city".equals(type)){
-                    result = Utility.handleCitiesResponse(coolWeatherDB,
-                            response, selectedProvince.getId());
-                }else if("county".equals(type)){
-                    result = Utility.handleCountisResponse(coolWeatherDB,
-                            response, selectedCity.getId());
-                }
-                if(result){
-                    //通过runOnUiThread()方法回到主线程处理逻辑
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            closeProgressDialog();
-                            if("province".equals(type)){
-                                queryProvinces();
-                            }else if("city".equals(type)){
-                                queryCities();
-                            }else if("county".equals(type)){
-                                queryCounties();
-                            }
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onError(Exception e) {
-                //通过runOnUiThread()方法回到主线程处理逻辑
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(ChooseAreaActivity.this,
-                                "加载失败", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-            }
-        });
-    }
 
     /**
      * 显示对话框

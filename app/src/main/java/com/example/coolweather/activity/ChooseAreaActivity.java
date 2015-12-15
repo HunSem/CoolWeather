@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.coolweather.R;
+import com.example.coolweather.model.Weather;
 import com.example.coolweather.until.HttpCallbackListener;
 import com.example.coolweather.until.HttpUtil;
 import com.example.coolweather.db.CoolWeatherDB;
@@ -33,7 +34,6 @@ public class ChooseAreaActivity extends AppCompatActivity {
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY =1;
     public static final int LEVEL_COUNTY = 2;
-    public static final int LEVEL_NEXT = 3;
 
     private ProgressDialog progressDialog;
     private TextView titleText;
@@ -70,14 +70,25 @@ public class ChooseAreaActivity extends AppCompatActivity {
      */
     private int currentLevel;
 
+    /**
+     * 是否跳出第三级菜单
+     */
     private boolean isJumpLevelCounty = false;
+
+    /**
+     * 是否从WeatherActivity中跳回
+     */
+    private boolean isFromWeatherActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        isJumpLevelCounty = getIntent().getBooleanExtra("from_weather_activity", false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if(prefs.getBoolean("city_selected", false)){
+
+        //已经选择了城市且不是从WeatherActivity跳转过来，才会直接跳到WeatherActivity
+        if(prefs.getBoolean("city_selected", false) && !isJumpLevelCounty){
             Intent intent = new Intent(this, WeatherActivity.class);
             startActivity(intent);
             finish();
@@ -211,6 +222,10 @@ public class ChooseAreaActivity extends AppCompatActivity {
             queryProvinces();
         }else
         {
+            if(isJumpLevelCounty){
+                Intent intent = new Intent(this, WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
     }

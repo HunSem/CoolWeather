@@ -3,108 +3,46 @@ package com.example.coolweather.until;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.example.coolweather.model.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by Percy on 2015/12/13.
  */
 public class Utility {
-//    /**
-//     * 解析和处理服务器返回的省级数据
-//     */
-//    public synchronized static boolean handleProvincesResponse(CoolWeatherDB coolWeatherDB,
-//                                                               String response){
-//        if(!TextUtils.isEmpty(response)){
-//            String[] allPronvinces = response.split(",");
-//            if(allPronvinces != null && allPronvinces.length > 0){
-//                for (String p : allPronvinces) {
-//                    String[] array = p.split("\\|");
-//                    Province province = new Province();
-//                    province.setProvinceCode(array[0]);
-//                    province.setProvinceName(array[1]);
-//                    //将解析出来的数据存储到Province表
-//                    coolWeatherDB.saveProvince(province);
-//                }
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * 解析和处理服务器返回的市级数据
-//     */
-//    public static boolean handleCitiesResponse(CoolWeatherDB coolWeatherDB,
-//                                                               String response, int provinceId){
-//        if(!TextUtils.isEmpty(response)){
-//            String[] allCities = response.split(",");
-//            if(allCities != null && allCities.length > 0){
-//                for (String c : allCities) {
-//                    String[] array = c.split("\\|");
-//                    City city = new City();
-//                    city.setCityCode(array[0]);
-//                    city.setCityName(array[1]);
-//                    city.setProvinceId(provinceId);
-//                    //将解析出来的数据存储到Province表
-//                    coolWeatherDB.saveCity(city);
-//                }
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * 解析和处理服务器返回的县级数据
-//     */
-//    public static boolean handleCountisResponse(CoolWeatherDB coolWeatherDB,
-//                                                            String response, int cityId){
-//        if(!TextUtils.isEmpty(response)){
-//            String[] allCounties = response.split(",");
-//            if(allCounties != null && allCounties.length > 0){
-//                for (String c : allCounties) {
-//                    String[] array = c.split("\\|");
-//                    County county = new County();
-//                    county.setCountyCode(array[0]);
-//                    county.setCountyName(array[1]);
-//                    county.setCityId(cityId);
-//                    //将解析出来的数据存储到Province表
-//                    coolWeatherDB.saveCounty(county);
-//                }
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+
     /**
      * 解析服务器返回的数据，并储存到本地
      */
     public static void handleWeatherResponse(Context context, String response){
-        try {
-            JSONObject jsonObject = new JSONObject(response);
-            JSONObject locationInfo = jsonObject.getJSONObject("basic");
-            String cityName = locationInfo.getString("city");
-            String weatherCode = locationInfo.getString("id");
-            String publishTime = locationInfo.getString("loc");
 
-            JSONObject now = jsonObject.getJSONObject("now");
-            String temp1 = now.getString("tmp");
-            String temp2 = now.getString("fl");
-            String weatherDesp = now.getString("txt");
+            Weather weather;
+            Gson gson = new Gson();
 
-            saveWeatherInfo(context, cityName, weatherCode, temp1, temp2,
-                    weatherDesp, publishTime);
+            weather = gson.fromJson(response, Weather.class);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+            Log.d("weather", weather.getCity());
+            Log.d("weather", weather.getId());
+            Log.d("weather", weather.getTxt());
+            Log.d("weather", weather.getFl());
+            Log.d("weather", weather.getLoc());
+            Log.d("weather", weather.getTmp());
+
+            saveWeatherInfo(context, weather.getCity(), weather.getId(),
+                    weather.getTmp(), weather.getFl(), weather.getTxt(), weather.getLoc());
+
+
     }
     /**
      * 将服务器返回的数据存储到SharedPreference文件

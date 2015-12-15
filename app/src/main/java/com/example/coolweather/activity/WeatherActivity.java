@@ -83,9 +83,9 @@ public class WeatherActivity extends AppCompatActivity {
      * 查询天气代号对应的天气
      */
     private void queryWeatherInfo(String weatherCode){
-        String address = "https://api.heweather.com/x3/weather?cityid=CN"
+        String address = "https://api.heweather.com/x3/weather?cityid="
                 +weatherCode + "&key="+key;
-        queryFromServer(address);
+        //queryFromServer(address);
     }
 
     /**
@@ -97,7 +97,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFinish(String response) {
 
-                System.out.println(response);
+                //System.out.println(response);
                 Utility.handleWeatherResponse(WeatherActivity.this, response);
 
                 runOnUiThread(new Runnable() {

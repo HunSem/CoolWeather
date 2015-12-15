@@ -4,17 +4,8 @@ package com.example.coolweather.model;
  * Created by Percy on 2015/12/13.
  */
 public class Province {
-    private int id;
     private String provinceName;
-    private String provinceCode;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getProvinceName() {
         return provinceName;
@@ -24,13 +15,6 @@ public class Province {
         this.provinceName = provinceName;
     }
 
-    public String getProvinceCode() {
-        return provinceCode;
-    }
-
-    public void setProvinceCode(String provinceCode) {
-        this.provinceCode = provinceCode;
-    }
 
 
 }

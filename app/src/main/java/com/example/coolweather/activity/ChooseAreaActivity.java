@@ -115,7 +115,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
     }
 
     /**
-     * 查询全国所有的省份，优先从数据库查询，如果没有查询到再去服务器上查询
+     * 查询全国所有的省份，从数据库查询
      */
     private void queryProvinces(){
         provinceList = coolWeatherDB.loadProvinces();
@@ -137,7 +137,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
      * 查询全国所有的城市，优先从数据库查询，如果没有查询到再去服务器上查询
      */
     private void queryCities(){
-        cityList = coolWeatherDB.loadCities(selectedProvince.getId());
+        cityList = coolWeatherDB.loadCities(selectedProvince.getProvinceName());
         if(cityList.size() > 0){
             dataList.clear();
             for(City city : cityList){
@@ -156,7 +156,8 @@ public class ChooseAreaActivity extends AppCompatActivity {
      * 查询全国所有的县，优先从数据库查询，如果没有查询到再去服务器上查询
      */
     private void queryCounties(){
-        countyList = coolWeatherDB.loadCounties(selectedCity.getId());
+        countyList = coolWeatherDB.loadCounties(selectedProvince.getProvinceName()
+                , selectedCity.getCityName());
         if(countyList.size() > 0){
             dataList.clear();
             for(County county : countyList){
@@ -198,7 +199,7 @@ public class ChooseAreaActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
         if(currentLevel == LEVEL_COUNTY){
             queryCities();
         }else if(currentLevel == LEVEL_CITY){

@@ -20,8 +20,7 @@ import java.io.InputStream;
  */
 
 public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
-    public static final String CITY_DB = "china_city.db";
-    public static final String CODE_DB = "city_code.db";
+    public static final String DB_NAME = "city_code.db";
 
     public static final String PACKAGE_NAME = "com.example.coolweather";
     // 数据库路径
@@ -34,15 +33,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
     public CoolWeatherOpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
         this.mContext = context;
-
-        if(name.equals(CITY_DB)){
-            copyCityDatabase(CITY_DB);
-            //Log.d("TAG", tag+":CITY");
-        }else if (name.equals(CODE_DB))
-        {
-            copyCodeDatabase(CODE_DB);
-            //Log.d("TAG", tag+":CODE");
-        }
+        copyDatabase(DB_NAME);
     }
 
 
@@ -55,40 +46,7 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean copyCityDatabase(String DB_NAME){
-        File db_path = new File(DB_PATH);
-        if(!db_path.exists()){
-            db_path.mkdirs();
-        }
-        File dbfile = new File(DB_PATH, DB_NAME);
-        //Log.d("TAG", "dbfile.exists:"+dbfile.exists());
-        // 判断数据库文件是否存在，
-        // 若不存在,将/assets下的数据库文件导入到/data/data/package/databases下
-        // 若存在，就直接打开数据库
-        try {
-            if (!dbfile.exists()) {
-                // 获取读取/raw下的数据库文件的输入流
-                InputStream is = mContext.getResources().openRawResource(
-                        R.raw.china_city); //欲导入的数据库
-                // 创建往数据库中写数据的输出流
-                FileOutputStream fos = new FileOutputStream(dbfile);
-                byte[] buffer = new byte[1024];
-                int count = -1;
-                while((count = is.read(buffer)) != -1){
-                    fos.write(buffer, 0, count);
-                }
-                fos.close();
-                is.close();
-
-                return true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public boolean copyCodeDatabase(String DB_NAME){
+    public boolean copyDatabase(String DB_NAME){
         File db_path = new File(DB_PATH);
         if(!db_path.exists()){
             db_path.mkdirs();
@@ -120,6 +78,39 @@ public class CoolWeatherOpenHelper extends SQLiteOpenHelper {
         }
         return false;
     }
+
+    /*public boolean copyCodeDatabase(String DB_NAME){
+        File db_path = new File(DB_PATH);
+        if(!db_path.exists()){
+            db_path.mkdirs();
+        }
+        File dbfile = new File(DB_PATH, DB_NAME);
+        //Log.d("TAG", "dbfile.exists:"+dbfile.exists());
+        // 判断数据库文件是否存在，
+        // 若不存在,将/assets下的数据库文件导入到/data/data/package/databases下
+        // 若存在，就直接打开数据库
+        try {
+            if (!dbfile.exists()) {
+                // 获取读取/raw下的数据库文件的输入流
+                InputStream is = mContext.getResources().openRawResource(
+                        R.raw.city_code); //欲导入的数据库
+                // 创建往数据库中写数据的输出流
+                FileOutputStream fos = new FileOutputStream(dbfile);
+                byte[] buffer = new byte[1024];
+                int count = -1;
+                while((count = is.read(buffer)) != -1){
+                    fos.write(buffer, 0, count);
+                }
+                fos.close();
+                is.close();
+
+                return true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }*/
 
 }
 

@@ -85,7 +85,7 @@ public class WeatherActivity extends AppCompatActivity {
     private void queryWeatherInfo(String weatherCode){
         String address = "https://api.heweather.com/x3/weather?cityid="
                 +weatherCode + "&key="+key;
-        //queryFromServer(address);
+        queryFromServer(address);
     }
 
     /**
@@ -126,11 +126,11 @@ public class WeatherActivity extends AppCompatActivity {
     private void showWeather(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         cityNameText.setText(prefs.getString("city_name", ""));
-        temp1Text.setText(prefs.getString("temp1", ""));
-        temp2Text.setText(prefs.getString("temp2", ""));
+        temp1Text.setText(prefs.getString("temp1", "") + "℃");
+        temp2Text.setText(prefs.getString("temp2", "") + "℃");
         weatherDespText.setText(prefs.getString("weather_desp", ""));
         publishText.setText(prefs.getString("publish_time", ""));
-        currentDateText.setText(prefs.getString("current_time", ""));
+        currentDateText.setText(prefs.getString("current_date", ""));
         weatherInfoLayout.setVisibility(View.VISIBLE);
         cityNameText.setVisibility(View.VISIBLE);
     }

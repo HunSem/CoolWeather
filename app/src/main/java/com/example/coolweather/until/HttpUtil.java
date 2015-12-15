@@ -7,6 +7,9 @@ import com.example.coolweather.activity.WeatherActivity;
 import com.example.coolweather.model.Weather;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,18 +43,8 @@ public class HttpUtil {
                     while ((line = reader.readLine()) != null){
                         response.append(line);
                     }
+
                     Log.d("XXXX", response.toString());
-                    Weather weather;
-                    Gson gson = new Gson();
-
-                    weather = gson.fromJson(response.toString(), Weather.class);
-
-                    Log.d("XXXX", weather.getCity());
-                    Log.d("XXXX", weather.getId());
-                    Log.d("XXXX", weather.getTxt());
-                    Log.d("XXXX", weather.getFl());
-                    Log.d("XXXX", weather.getLoc());
-                    Log.d("XXXX", weather.getTmp());
 
                     if(listener != null){
                         //回调onFinish()方法

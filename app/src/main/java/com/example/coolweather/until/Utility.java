@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.example.coolweather.model.Weather;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,20 +28,34 @@ public class Utility {
      */
     public static void handleWeatherResponse(Context context, String response){
 
-            Weather weather;
-            Gson gson = new Gson();
+        Weather weather = new Weather();
+        try {
+            JSONObject jsonOriginal = new JSONObject(response);
+            JSONArray jsonArray = jsonOriginal.getJSONArray("HeWeather data service 3.0");
+            JSONObject jsonObject = jsonArray.getJSONObject(0);
 
-            weather = gson.fromJson(response, Weather.class);
+            JSONObject jsonBasic = jsonObject.getJSONObject("basic");
+            weather.setCity(jsonBasic.getString("city"));
+            weather.setId(jsonBasic.getString("id"));
 
-            Log.d("weather", weather.getCity());
-            Log.d("weather", weather.getId());
-            Log.d("weather", weather.getTxt());
-            Log.d("weather", weather.getFl());
-            Log.d("weather", weather.getLoc());
-            Log.d("weather", weather.getTmp());
+            JSONObject jsonUpdate = jsonBasic.getJSONObject("update");
+            weather.setLoc(jsonUpdate.getString("loc"));
 
-            saveWeatherInfo(context, weather.getCity(), weather.getId(),
-                    weather.getTmp(), weather.getFl(), weather.getTxt(), weather.getLoc());
+            JSONObject jsonNow = jsonObject.getJSONObject("now");
+            weather.setTmp(jsonNow.getString("tmp"));
+            weather.setFl(jsonNow.getString("fl"));
+
+            JSONObject jsonCond = jsonNow.getJSONObject("cond");
+            weather.setTxt(jsonCond.getString("txt"));
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        saveWeatherInfo(context, weather.getCity(), weather.getId(),
+                weather.getTmp(), weather.getFl(), weather.getTxt(), weather.getLoc());
 
 
     }

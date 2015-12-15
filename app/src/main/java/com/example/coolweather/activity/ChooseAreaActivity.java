@@ -70,6 +70,8 @@ public class ChooseAreaActivity extends AppCompatActivity {
      */
     private int currentLevel;
 
+    private boolean isJumpLevelCounty = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,15 +101,19 @@ public class ChooseAreaActivity extends AppCompatActivity {
                     selectedCity = cityList.get(position);
                     queryCounties();
                 }
-                if(currentLevel == LEVEL_COUNTY){
+                if(currentLevel == LEVEL_COUNTY && isJumpLevelCounty){
                     selectedCounty = countyList.get(position);
                     String code = coolWeatherDB.loadCityCode(selectedProvince, selectedCity, selectedCounty);
                    Toast.makeText(ChooseAreaActivity.this, code, Toast.LENGTH_SHORT).show();
-
                     Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
                     intent.putExtra("county_code", code);
                     startActivity(intent);
                     finish();
+                }else if(currentLevel == LEVEL_COUNTY && (!isJumpLevelCounty)){
+                    for (int i = 0; i < 900; i++) {
+
+                    }
+                    isJumpLevelCounty = true;
                 }
             }
         });
@@ -199,7 +205,6 @@ public class ChooseAreaActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-//        super.onBackPressed();
         if(currentLevel == LEVEL_COUNTY){
             queryCities();
         }else if(currentLevel == LEVEL_CITY){

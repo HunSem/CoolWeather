@@ -166,7 +166,7 @@ public class WeatherActivity extends AppCompatActivity implements View.OnClickLi
         cityNameText.setVisibility(View.VISIBLE);
 
         Intent intent = new Intent(this, AutoUpdateReceiver.class);
-        stopService(intent);
+        startService(intent);
     }
 
 
